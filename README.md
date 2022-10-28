@@ -1,4 +1,4 @@
-# THEME - LEGEN 2022 - OPHIM CMS
+# THEME - LEGEND 2022 - OPHIM CMS
 
 ## Demo
 ### Trang Chủ
@@ -17,11 +17,11 @@
 https://github.com/hacoidev/ophim-core
 
 ## Install
-1. Tại thư mục của Project: `composer require ophimcms/theme-legen`
+1. Tại thư mục của Project: `composer require ophimcms/theme-legend`
 2. Kích hoạt giao diện trong Admin Panel
 
 ## Update
-1. Tại thư mục của Project: `composer update ophimcms/theme-legen`
+1. Tại thư mục của Project: `composer update ophimcms/theme-legend`
 2. Re-Activate giao diện trong Admin Panel
 
 ## Document
@@ -48,5 +48,5 @@ https://github.com/hacoidev/ophim-core
 
 
 ### Custom View Blade
-- File blade gốc trong Package: `/vendor/ophimcms/theme-legen/resources/views/themelegen`
-- Copy file cần custom đến: `/resources/views/vendor/themes/themelegen`
+- File blade gốc trong Package: `/vendor/ophimcms/theme-legend/resources/views/themelegend`
+- Copy file cần custom đến: `/resources/views/vendor/themes/themelegend`
