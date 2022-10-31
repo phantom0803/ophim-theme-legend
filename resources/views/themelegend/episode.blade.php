@@ -1,5 +1,13 @@
 @extends('themes::themelegend.layout')
 
+@push('header')
+    <style>
+        #media-player-box iframe {
+            height: 365px;
+        }
+    </style>
+@endpush
+
 @section('breadcrumb')
     <ol class="breadcrumb" itemScope itemType="https://schema.org/BreadcrumbList">
         <li itemProp="itemListElement" itemScope itemType="http://schema.org/ListItem">
@@ -249,24 +257,25 @@
     </script>
 
     <script>
+        var episode_id = {{$episode->id}};
         const wrapper = document.getElementById('media-player-box');
         const vastAds = "{{ Setting::get('jwplayer_advertising_file') }}";
 
         function chooseStreamingServer(el) {
             const type = el.dataset.type;
-            const link = el.dataset.link;
+            const link = el.dataset.link.replace(/^http:\/\//i, 'https://');
             const id = el.dataset.id;
 
             const newUrl =
                 location.protocol +
                 "//" +
                 location.host +
-                location.pathname +
-                "?id=" + id;
+                location.pathname.replace(`-${episode_id}`, `-${id}`);
 
             history.pushState({
                 path: newUrl
             }, "", newUrl);
+            episode_id = id;
 
 
             Array.from(document.getElementsByClassName('streaming-server')).forEach(server => {
@@ -274,7 +283,6 @@
             })
             el.classList.add('active');
 
-            link.replace('http://', 'https://');
             renderPlayer(type, link, id);
         }
 
@@ -463,9 +471,7 @@
     </script>
     <script>
         document.addEventListener("DOMContentLoaded", function() {
-            const queryString = window.location.search;
-            const urlParams = new URLSearchParams(queryString);
-            const episode = urlParams.get('id')
+            const episode = '{{$episode->id}}';
             let playing = document.querySelector(`[data-id="${episode}"]`);
             if (playing) {
                 playing.click();
@@ -481,7 +487,7 @@
 
     <script type="text/javascript">
         var URL_POST_RATING = '{{ route('movie.rating', ['movie' => $currentMovie->slug]) }}';
-        var URL_POST_REPORT_ERROR = '{{ route('episodes.report', ['movie' => $currentMovie->slug, 'episode' => $episode->slug]) }}';
+        var URL_POST_REPORT_ERROR = '{{ route('episodes.report', ['movie' => $currentMovie->slug, 'episode' => $episode->slug, 'id' => $episode->id]) }}';
     </script>
     <script type="text/javascript" src="/themes/legend/js/jquery.raty.js"></script>
     <script type="text/javascript" src="/themes/legend/js/public.film.js"></script>
