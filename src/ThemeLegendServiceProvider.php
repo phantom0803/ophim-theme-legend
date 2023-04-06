@@ -32,10 +32,32 @@ class ThemeLegendServiceProvider extends ServiceProvider
                 'options' => [
                     [
                         'name' => 'recommendations_limit',
-                        'label' => 'Recommendations Limit',
+                        'label' => 'Recommended movies limit',
                         'type' => 'number',
-                        'hint' => 'Number',
                         'value' => 10,
+                        'wrapperAttributes' => [
+                            'class' => 'form-group col-md-4',
+                        ],
+                        'tab' => 'List'
+                    ],
+                    [
+                        'name' => 'per_page_limit',
+                        'label' => 'Pages limit',
+                        'type' => 'number',
+                        'value' => 28,
+                        'wrapperAttributes' => [
+                            'class' => 'form-group col-md-4',
+                        ],
+                        'tab' => 'List'
+                    ],
+                    [
+                        'name' => 'movie_related_limit',
+                        'label' => 'Movies related limit',
+                        'type' => 'number',
+                        'value' => 9,
+                        'wrapperAttributes' => [
+                            'class' => 'form-group col-md-4',
+                        ],
                         'tab' => 'List'
                     ],
                     [

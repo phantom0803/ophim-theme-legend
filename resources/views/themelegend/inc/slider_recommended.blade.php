@@ -12,7 +12,7 @@
                                 <a class="popup" href="{{ $movie->getUrl() }}"
                                     title="{{ $movie->name }} - {{ $movie->origin_name }}">
                                     <div class="movie-carousel-top-item"
-                                        style="background-image: url('{{ $movie->thumb_url }}');">
+                                        style="background-image: url('{{ $movie->getThumbUrl() }}');">
                                         <div class="movie-carousel-top-item-meta">
                                             <h3 class="movie-name-1">{{ $movie->name }}</h3>
                                             <h4 class="movie-name-2">{{ $movie->origin_name }}</h4>

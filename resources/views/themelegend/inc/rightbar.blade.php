@@ -9,13 +9,13 @@
                             href="{{ $movie->getUrl() }}">
                             <span class="status">{{ $movie->quality }} {{ $movie->language }}</span>
                             <div class="list-top-movie-item-thumb"
-                                style="background-image: url('{{ $movie->thumb_url }}')">
+                                style="background-image: url('{{ $movie->getThumbUrl() }}')">
                             </div>
                             <div class="list-top-movie-item-info">
                                 <span class="list-top-movie-item-vn">{{ $movie->name }}</span>
                                 <span class="list-top-movie-item-en">{{ $movie->origin_name }}</span>
                                 <span class="list-top-movie-item-view">{{ $movie->view_total }} lượt xem</span>
-                                <span class="rate-vote rate-vote-{{number_format($movie->rating_star ?? 0, 0)}}"></span>
+                                <span class="rate-vote rate-vote-{{number_format($movie->getRatingStar() ?? 0, 0)}}"></span>
                             </div>
                         </a>
                     </li>

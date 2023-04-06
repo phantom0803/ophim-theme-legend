@@ -137,32 +137,31 @@
                         <div class="box-rating">
                             <input id="hint_current" type="hidden" value="">
                             <input id="score_current" type="hidden"
-                                value="{{ number_format($currentMovie->rating_star ?? 0, 1) }}">
+                                value="{{$currentMovie->getRatingStar()}}">
                             <p>Đánh giá phim <span
-                                    class="num-rating">({{ number_format($currentMovie->rating_star ?? 0, 1) }} sao /
-                                    {{ $currentMovie->rating_count ?? 0 }} đánh giá)</span></p>
-                            <div id="star" data-score="{{ number_format($currentMovie->rating_star ?? 0, 1) }}"
+                                    class="num-rating">({{$currentMovie->getRatingStar()}} sao /
+                                    {{$currentMovie->getRatingCount()}} đánh giá)</span></p>
+                            <div id="star" data-score="{{$currentMovie->getRatingStar()}}"
                                 style="cursor: pointer;"></div>
                             <span id="hint"></span>
-                            <img class="hidden" itemprop="thumbnailUrl" src="{{ $currentMovie->thumb_url }}"
+                            <img class="hidden" itemprop="thumbnailUrl" src="{{ $currentMovie->getThumbUrl() }}"
                                 alt="{{ $currentMovie->name }}">
-                            <img class="hidden" itemprop="image" src="{{ $currentMovie->thumb_url }}"
+                            <img class="hidden" itemprop="image" src="{{ $currentMovie->getThumbUrl() }}"
                                 alt="{{ $currentMovie->name }}">
                             <span class="hidden" itemprop="aggregateRating" itemscope
                                 itemtype="http://schema.org/AggregateRating">
                                 <span
-                                    itemprop="ratingValue">{{ number_format($currentMovie->rating_star ?? 0, 1) }}</span>
-                                <meta itemprop="ratingcount" content="{{ $currentMovie->rating_count ?? 0 }}">
+                                    itemprop="ratingValue">{{$currentMovie->getRatingStar()}}</span>
+                                <meta itemprop="ratingcount" content="{{$currentMovie->getRatingCount()}}">
                                 <meta itemprop="bestRating" content="10" />
                                 <meta itemprop="worstRating" content="1" />
-                                <span class="hidden" itemprop="reviewCount">0</span>
                             </span>
                         </div>
                     </div>
                     <div class="col-6 movie-image">
                         <div class="movie-l-img">
                             <img alt="{{ $currentMovie->name }} - {{ $currentMovie->origin_name }}"
-                                src="{{ $currentMovie->thumb_url }}" /></a>
+                                src="{{ $currentMovie->getThumbUrl() }}" /></a>
                             <ul class="btn-block">
                                 <li class="item" itemprop="potentialAction" itemscope
                                     itemtype="http://schema.org/WatchAction">
@@ -274,9 +273,12 @@
         <div class="clear"></div>
     </div>
 
-    <div class="block-wrapper page-single block-comments">
-        <div class="fb-comments" data-href="{{ $currentMovie->getUrl() }}" data-width="100%" data-colorscheme="dark"
-            data-numposts="5" data-order-by="reverse_time" data-lazy="true"></div>
+    <div class="block-wrapper page-single block-comments" id="block-comment">
+        <h4>Bình luận về phim</h4>
+        <div style="width: 100%; background-color: #fff">
+            <div class="fb-comments" data-href="{{ $currentMovie->getUrl() }}" data-width="100%" data-colorscheme="dark"
+                data-numposts="5" data-order-by="reverse_time" data-lazy="true"></div>
+        </div>
     </div>
 
     <div class="clear"></div>
@@ -289,7 +291,7 @@
                 <li class="movie-item">
                     <a class="block-wrapper" title="{{ $movie->name }}" href="{{ $movie->getUrl() }}">
                         <div class="movie-thumbnail"
-                            style="background:url({{ $movie->thumb_url }}); background-size: cover;">
+                            style="background:url({{ $movie->getThumbUrl() }}); background-size: cover;">
                         </div>
                         <div class="movie-meta">
                             <span class="movie-title-1">{{ $movie->name }}</span>

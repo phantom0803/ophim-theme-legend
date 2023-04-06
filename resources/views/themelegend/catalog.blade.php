@@ -50,7 +50,7 @@
                             <div class="block-wrapper">
                                 <div class="movie-thumbnail ratio-box ratio-3_4">
                                     <div class="public-film-item-thumb ratio-content"
-                                        style="background-image:url('{{ $movie->thumb_url }}')"></div>
+                                        style="background-image:url('{{ $movie->getThumbUrl() }}')"></div>
                                 </div>
                                 <div class="movie-meta">
                                     <div class="movie-title-1">{{ $movie->name }}</div><span

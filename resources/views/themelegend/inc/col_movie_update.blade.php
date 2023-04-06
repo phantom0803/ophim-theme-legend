@@ -27,7 +27,7 @@
                         <li class="movie">
                             <a class="movie-link" title="{{ $movie['name'] }}" href="{{ $movie->getUrl() }}">
                                 <div class="thumbn"
-                                    style="background-image: url('{{ $movie['thumb_url'] }}');">
+                                    style="background-image: url('{{ $movie->getThumbUrl() }}');">
                                 </div>
                                 <div class="meta"><span class="name-vn link">{{ $movie['name'] }}</span>
                                     <span class="name-en">{{ $movie['origin_name'] }}</span></div>

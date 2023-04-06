@@ -36,7 +36,7 @@ class ThemeLegendController
                 $query->where(function ($query) {
                     $query->where('name', 'like', '%' . request('search') . '%')
                         ->orWhere('origin_name', 'like', '%' . request('search')  . '%');
-                });
+                })->orderBy('name', 'desc');
             })->when(!empty($request['filter']['sort']), function ($movie) {
                 if (request('filter')['sort'] == 'create') {
                     return $movie->orderBy('created_at', 'desc');
@@ -50,7 +50,7 @@ class ThemeLegendController
                 if (request('filter')['sort'] == 'view') {
                     return $movie->orderBy('view_total', 'desc');
                 }
-            })->paginate(36);
+            })->paginate();
 
             return view('themes::themelegend.catalog', [
                 'data' => $data,
@@ -63,10 +63,10 @@ class ThemeLegendController
         ]);
     }
 
-    public function getMovieOverview(Request $request, $movie)
+    public function getMovieOverview(Request $request)
     {
         /** @var Movie */
-        $movie = Movie::fromCache()->find($movie);
+        $movie = Movie::fromCache()->find($request->movie ?: $request->id);
 
         if (is_null($movie)) abort(404);
 
@@ -77,10 +77,10 @@ class ThemeLegendController
         $movie->increment('view_week', 1);
         $movie->increment('view_month', 1);
 
-        $movie_related_cache_key = 'movie_related.' . $movie->id;
+        $movie_related_cache_key = 'movie_related:' . $movie->id;
         $movie_related = Cache::get($movie_related_cache_key);
         if(is_null($movie_related)) {
-            $movie_related = $movie->categories[0]->movies()->inRandomOrder()->limit(6)->get();
+            $movie_related = $movie->categories[0]->movies()->inRandomOrder()->limit(get_theme_option('movie_related_limit', 10))->get();
             Cache::put($movie_related_cache_key, $movie_related, setting('site_cache_ttl', 5 * 60));
         }
 
@@ -91,16 +91,17 @@ class ThemeLegendController
         ]);
     }
 
-    public function getEpisode(Request $request, $movie, $slug, $id)
+    public function getEpisode(Request $request)
     {
-        $movie = Movie::fromCache()->find($movie)->load('episodes');
+        $movie = Movie::fromCache()->find($request->movie ?: $request->movie_id)->load('episodes');
 
         if (is_null($movie)) abort(404);
 
         /** @var Episode */
-        $episode = $movie->episodes->when($id, function ($collection, $id) {
-            return $collection->where('id', $id);
-        })->firstWhere('slug', $slug);
+        $episode_id = $request->id;
+        $episode = $movie->episodes->when($episode_id, function ($collection, $episode_id) {
+            return $collection->where('id', $episode_id);
+        })->firstWhere('slug', $request->episode);
 
         if (is_null($episode)) abort(404);
 
@@ -111,10 +112,10 @@ class ThemeLegendController
         $movie->increment('view_week', 1);
         $movie->increment('view_month', 1);
 
-        $movie_related_cache_key = 'movie_related.' . $movie->id;
+        $movie_related_cache_key = 'movie_related:' . $movie->id;
         $movie_related = Cache::get($movie_related_cache_key);
         if(is_null($movie_related)) {
-            $movie_related = $movie->categories[0]->movies()->inRandomOrder()->limit(6)->get();
+            $movie_related = $movie->categories[0]->movies()->inRandomOrder()->limit(get_theme_option('movie_related_limit', 10))->get();
             Cache::put($movie_related_cache_key, $movie_related, setting('site_cache_ttl', 5 * 60));
         }
 
@@ -154,16 +155,16 @@ class ThemeLegendController
         return response([], 204);
     }
 
-    public function getMovieOfCategory(Request $request, $slug)
+    public function getMovieOfCategory(Request $request)
     {
         /** @var Category */
-        $category = Category::fromCache()->find($slug);
+        $category = Category::fromCache()->find($request->category ?: $request->id);
 
         if (is_null($category)) abort(404);
 
         $category->generateSeoTags();
 
-        $movies = $category->movies()->orderBy('created_at', 'desc')->paginate(36);
+        $movies = $category->movies()->orderBy('created_at', 'desc')->paginate(get_theme_option('per_page_limit'));
 
         return view('themes::themelegend.catalog', [
             'data' => $movies,
@@ -173,16 +174,16 @@ class ThemeLegendController
         ]);
     }
 
-    public function getMovieOfRegion(Request $request, $slug)
+    public function getMovieOfRegion(Request $request)
     {
         /** @var Region */
-        $region = Region::fromCache()->find($slug);
+        $region = Region::fromCache()->find($request->region ?: $request->id);
 
         if (is_null($region)) abort(404);
 
         $region->generateSeoTags();
 
-        $movies = $region->movies()->orderBy('created_at', 'desc')->paginate(36);
+        $movies = $region->movies()->orderBy('created_at', 'desc')->paginate(get_theme_option('per_page_limit'));
 
         return view('themes::themelegend.catalog', [
             'data' => $movies,
@@ -192,16 +193,16 @@ class ThemeLegendController
         ]);
     }
 
-    public function getMovieOfActor(Request $request, $slug)
+    public function getMovieOfActor(Request $request)
     {
         /** @var Actor */
-        $actor = Actor::fromCache()->find($slug);
+        $actor = Actor::fromCache()->find($request->actor ?: $request->id);
 
         if (is_null($actor)) abort(404);
 
         $actor->generateSeoTags();
 
-        $movies = $actor->movies()->orderBy('created_at', 'desc')->paginate(36);
+        $movies = $actor->movies()->orderBy('created_at', 'desc')->paginate(get_theme_option('per_page_limit'));
 
         return view('themes::themelegend.catalog', [
             'data' => $movies,
@@ -211,16 +212,16 @@ class ThemeLegendController
         ]);
     }
 
-    public function getMovieOfDirector(Request $request, $slug)
+    public function getMovieOfDirector(Request $request)
     {
         /** @var Director */
-        $director = Director::fromCache()->find($slug);
+        $director = Director::fromCache()->find($request->director ?: $request->id);
 
         if (is_null($director)) abort(404);
 
         $director->generateSeoTags();
 
-        $movies = $director->movies()->orderBy('created_at', 'desc')->paginate(36);
+        $movies = $director->movies()->orderBy('created_at', 'desc')->paginate(get_theme_option('per_page_limit'));
 
         return view('themes::themelegend.catalog', [
             'data' => $movies,
@@ -230,16 +231,16 @@ class ThemeLegendController
         ]);
     }
 
-    public function getMovieOfTag(Request $request, $slug)
+    public function getMovieOfTag(Request $request)
     {
         /** @var Tag */
-        $tag = Tag::fromCache()->find($slug);
+        $tag = Tag::fromCache()->find($request->tag ?: $request->id);
 
         if (is_null($tag)) abort(404);
 
         $tag->generateSeoTags();
 
-        $movies = $tag->movies()->orderBy('created_at', 'desc')->paginate(36);
+        $movies = $tag->movies()->orderBy('created_at', 'desc')->paginate(get_theme_option('per_page_limit'));
         return view('themes::themelegend.catalog', [
             'data' => $movies,
             'tag' => $tag,
@@ -248,16 +249,16 @@ class ThemeLegendController
         ]);
     }
 
-    public function getMovieOfType(Request $request, $slug)
+    public function getMovieOfType(Request $request)
     {
         /** @var Catalog */
-        $catalog = Catalog::fromCache()->find($slug);
+        $catalog = Catalog::fromCache()->find($request->type ?: $request->id);
 
         if (is_null($catalog)) abort(404);
 
         $catalog->generateSeoTags();
 
-        $cache_key = 'catalog.' . $catalog->id . '.page.' . $request['page'];
+        $cache_key = 'catalog:' . $catalog->id . ':page:' . ($request['page'] ?: 1);
         $movies = Cache::get($cache_key);
         if(is_null($movies)) {
             $value = explode('|', trim($catalog->value));
